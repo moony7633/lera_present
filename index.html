@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Новое уведомление</title>
+<style>
+:root{--bg1:#1b1233;--bg2:#3a1c4f;--card:#ffffff14;--text:#f6eefc;--muted:#c9b6dd;--accent:#ff7eb6;--paper:#fff8ee;--ink:#3b2a3f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg1:#ffe3f0;--bg2:#e4d4ff;--card:#ffffffb0;--text:#3b2a3f;--muted:#7a5f86;--accent:#e0408a}}
+:root[data-theme="dark"]{--bg1:#1b1233;--bg2:#3a1c4f}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--text);background:linear-gradient(160deg,var(--bg1),var(--bg2));overflow:hidden}
+.screen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;flex-direction:column;text-align:center}
+.screen.on{display:flex;animation:fade .7s ease}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid #ffffff30;border-radius:22px;padding:28px 24px;max-width:380px;width:100%;box-shadow:0 20px 60px #0004}
+.bell{font-size:44px;display:inline-block;animation:ring 1.4s infinite;transform-origin:50% 10%}
+@keyframes ring{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(18deg)}20%{transform:rotate(-16deg)}30%{transform:rotate(12deg)}40%{transform:rotate(-8deg)}}
+h1{font-size:22px;margin:12px 0 6px}
+p{color:var(--muted);margin:6px 0 18px}
+.row{display:flex;gap:12px;justify-content:center}
+button{font:inherit;border:0;border-radius:14px;padding:12px 26px;cursor:pointer;color:#fff;background:var(--accent);font-weight:600;transition:transform .15s}
+button:active{transform:scale(.95)}
+button.no{background:#ffffff26;color:var(--text)}
+#no.run{position:fixed;transition:left .25s,top .25s}
+input{font:inherit;width:100%;padding:12px 14px;border-radius:12px;border:1px solid #ffffff40;background:#00000026;color:var(--text);text-align:center;font-size:18px;letter-spacing:1px;margin-bottom:14px}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+#msg{min-height:20px;color:var(--accent);font-size:14px;margin:0 0 10px}
+#term{font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;color:#7dffb0;font-size:14px;line-height:1.7;min-height:120px}
+.envwrap{perspective:900px}
+.env{position:relative;width:min(300px,80vw);height:min(200px,53vw);background:#e8a3c0;border-radius:6px 6px 14px 14px;cursor:pointer;animation:float 3s ease-in-out infinite;box-shadow:0 20px 50px #0006}
+@keyframes float{50%{transform:translateY(-10px)}}
+.env .paper{position:absolute;left:8%;right:8%;top:6%;height:80%;background:var(--paper);border-radius:6px;transition:transform .9s .5s ease;display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:30px}
+.env .front{position:absolute;inset:0;border-radius:6px 6px 14px 14px;background:linear-gradient(135deg,#f3b6cf 50%,transparent 50%),linear-gradient(225deg,#f3b6cf 50%,transparent 50%),#e79dbb;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%)}
+.env .flap{position:absolute;left:0;right:0;top:0;height:55%;background:#d8809f;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .6s ease,z-index 0s .3s;z-index:3}
+.env .heart{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:26px;z-index:4;transition:opacity .3s}
+.env.open .flap{transform:rotateX(180deg);z-index:0}
+.env.open .heart{opacity:0}
+.env.open .paper{transform:translateY(-70%);z-index:2}
+.hint{margin-top:30px;color:var(--muted);font-size:14px;animation:fade 2s}
+#letter{position:fixed;inset:0;display:none;overflow-y:auto;padding:max(24px,env(safe-area-inset-top)) 18px 60px;background:#0007;z-index:20}
+#letter.on{display:block;animation:fade .6s}
+.sheet{max-width:560px;margin:0 auto;background:var(--paper);color:var(--ink);border-radius:10px;padding:30px 24px;box-shadow:0 25px 70px #000a;font-family:Georgia,"Times New Roman",serif;line-height:1.7;font-size:17px;text-align:left}
+.sheet h2{margin:0 0 16px;font-size:26px;color:#b02a62}
+.sheet p{color:var(--ink);margin:0 0 14px;opacity:0;transform:translateY(10px);transition:opacity 1s,transform 1s}
+.sheet p.show{opacity:1;transform:none}
+.sheet .sign{font-weight:bold;color:#b02a62}
+.fall{position:fixed;top:-30px;pointer-events:none;z-index:50;animation:drop linear forwards}
+@keyframes drop{to{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+</style>
+</head>
+<body>
+
+<div class="screen on" id="s1">
+  <div class="card">
+    <div class="bell">🔔</div>
+    <h1>1 новое уведомление</h1>
+    <p>Прочитать сейчас?</p>
+    <div class="row">
+      <button id="yes">Да</button>
+      <button id="no" class="no">Нет</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s2">
+  <div class="card">
+    <div style="font-size:40px">🔐</div>
+    <h1>Проверка личности</h1>
+    <p>Чтобы открыть сообщение, ответь: когда у меня день рождения?</p>
+    <input id="date" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" autocomplete="off">
+    <div id="msg"></div>
+    <button id="check">Проверить</button>
+  </div>
+</div>
+
+<div class="screen" id="s3">
+  <div class="card"><div id="term"></div></div>
+</div>
+
+<div class="screen" id="s4">
+  <div class="envwrap">
+    <div class="env" id="env">
+      <div class="paper">💌</div>
+      <div class="front"></div>
+      <div class="flap"></div>
+      <div class="heart">❤️</div>
+    </div>
+  </div>
+  <div class="hint">Нажми на конверт</div>
+</div>
+
+<div id="letter">
+  <div class="sheet" id="sheet">
+    <h2>Лере, моей луне</h2>
+    <p>Сегодня ровно месяц, как мы вместе. Месяц — это много или мало? Для кого-то просто цифра. Но для меня это время, за которое моя жизнь стала другой. Лучше. Ярче. Твоей.</p>
+    <p>Я помню, как всё началось. Ты появилась в моей жизни через подругу, через странное стечение обстоятельств, через историю с Мишей. А потом мы начали общаться. И я даже не подозревал, что ты уже знала обо мне больше, чем я сам. Ты «сканировала» меня ещё до нашей первой встречи. Искала минусы. Пыталась найти что-то, чтобы Вика от меня отказалась. А нашла... меня. И я нашёл тебя.</p>
+    <p>Я не знаю, как это работает. Но с первого нашего разговора я почувствовал, что ты — не просто кто-то. Ты — та, с кем я могу быть собой. Без масок. Без страха. Ты видишь меня насквозь, и это не пугает. Это освобождает.</p>
+    <p>Помнишь, я рассказывал тебе свои страхи? Про то, что боюсь надоесть. Про то, что боюсь близости. Про то, что боюсь одиночества и предательства. Ты не отмахнулась. Ты выслушала. И сказала: «Я никогда не перестану любить тебя меньше, чем сейчас. НИКОГДА». Я запомнил это. И я буду помнить это всегда.</p>
+    <p>Мы говорили о будущем. О дочке. О сыне, которого можно назвать Денисом. О том, что будет к тридцати. Это были не просто слова. Это были мечты. Наши мечты. И я хочу, чтобы они сбылись. С тобой.</p>
+    <p>Ты — моя луна. Спокойная, глубокая, притягательная. На тебя можно смотреть бесконечно. Ты — моя кошка. Ласковая, но с характером. Ты — моя любимая газ. И я не знаю, что ещё сказать, потому что словами это не передать.</p>
+    <p>Спасибо тебе за этот месяц. За каждый день. За каждое сообщение. За каждый твой смех, даже если он сквозь слёзы. За то, что ты рядом. Даже на расстоянии. Даже когда грустно. Даже когда страшно.</p>
+    <p>Я не знаю, что будет дальше. Но я знаю, что хочу пройти этот путь с тобой. Весь. До конца. И я сделаю всё, чтобы ты была счастлива. Потому что ты этого заслуживаешь. Потому что ты — моя.</p>
+    <p class="sign">С месяцем, любимая. Это только начало. ❤️</p>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
+
+// Кнопка «Нет» убегает
+const no=$('no');
+function run(e){
+  if(e&&e.preventDefault)e.preventDefault();
+  const r=no.getBoundingClientRect();
+  const w=r.width||80,h=r.height||44;
+  no.classList.add('run');
+  no.style.left=Math.random()*(innerWidth-w-20)+10+'px';
+  no.style.top=Math.random()*(innerHeight-h-20)+10+'px';
+}
+['mouseover','touchstart','click','focus'].forEach(ev=>no.addEventListener(ev,run,{passive:false}));
+
+$('yes').onclick=()=>{no.style.display='none';go('s2');setTimeout(()=>$('date').focus(),300)};
+
+// Проверка даты
+function ok(v){
+  const m=v.trim().match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{4})$/);
+  return !!m&&+m[1]===27&&+m[2]===5&&+m[3]===2009;
+}
+function check(){
+  if(ok($('date').value)){go('s3');terminal()}
+  else{
+    $('msg').textContent='Неверно 🙈 Попробуй ещё раз';
+    const c=$('date');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
+  }
+}
+$('check').onclick=check;
+$('date').addEventListener('keydown',e=>{if(e.key==='Enter')check()});
+
+// «Хакерская» анимация
+function terminal(){
+  const lines=['> проверка личности... OK','> доступ: Лера ✔','> расшифровка сообщения...','> ██████████ 100%','> доступ разрешён ❤'];
+  const t=$('term');t.innerHTML='';let i=0;
+  const timer=setInterval(()=>{
+    if(i<lines.length){t.innerHTML+=lines[i++]+'<br>'}
+    else{clearInterval(timer);setTimeout(()=>go('s4'),600)}
+  },650);
+}
+
+// Конверт
+let opened=false;
+$('env').onclick=()=>{
+  if(opened)return;opened=true;
+  $('env').classList.add('open');
+  hearts(25);
+  setTimeout(()=>{
+    $('letter').classList.add('on');
+    document.querySelectorAll('#sheet p').forEach((p,i)=>setTimeout(()=>p.classList.add('show'),400+i*1600));
+    setInterval(()=>hearts(2),1200);
+  },1900);
+};
+
+// Сердечки
+function hearts(n){
+  const set=['❤️','💖','💗','✨','🌙'];
+  for(let i=0;i<n;i++){
+    const h=document.createElement('div');
+    h.className='fall';h.textContent=set[Math.floor(Math.random()*set.length)];
+    h.style.left=Math.random()*100+'vw';
+    h.style.fontSize=14+Math.random()*20+'px';
+    h.style.animationDuration=4+Math.random()*4+'s';
+    h.style.animationDelay=Math.random()*1.5+'s';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),10000);
+  }
+}
+</script>
+</body>
+</html>
